@@ -30,7 +30,7 @@ export default function RootLayout({ children }) {
         className={`  antialiased flex`}
       >
         <Navbar />
-        <main className="flex-1 p-8 ">
+        <main className="flex-1 p-8 h-[100vh] overflow-scroll">
           {children}
         </main>
       </body>

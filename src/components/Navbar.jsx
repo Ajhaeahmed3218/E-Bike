@@ -1,12 +1,13 @@
 "use client";
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleSidebar = () => setIsOpen(!isOpen);
-
+    const pathName = usePathname();
     return (
         <div className="flex h-screen">
             {/* Sidebar */}
@@ -21,7 +22,7 @@ const Navbar = () => {
                 {/* Links */}
                 <nav className="space-y-2">
                     {navItems.map((item) => (
-                        <Link className="text-[#AAC7D8] font-bold block py-2 px-4 rounded hover:bg-[#DFEBF6] hover:text-[#768A96]" key={item.title} href={item.path}>{item.title}</Link>
+                        <Link className={`text-[#AAC7D8] font-bold block py-2 px-4 rounded hover:bg-[#DFEBF6] hover:text-[#768A96] ${item.path === pathName ? "bg-[#DFEBF6] text-[#768A96]" : ''}`} key={item.title} href={item.path}>{item.title}</Link>
                     ))}
                     {/*  */}
                 </nav>
