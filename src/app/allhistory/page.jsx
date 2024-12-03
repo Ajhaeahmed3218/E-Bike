@@ -1,149 +1,152 @@
-import React from 'react';
+"use client";
+import React, { useState, useEffect } from "react";
 
 const Allhistory = () => {
-    const customers = [
-        {
-            age: "20",
-            amount: "100",
-            bikeNumber: "3",
-            date: "2024-11-25",
-            email: "maher@gmail.com",
-            fromTime: "17:55",
-            fullName: "Maher Ahmed",
-            phone: "+8801793321319",
-            toTime: "18:55"
-        },
-        {
-            age: "25",
-            amount: "150",
-            bikeNumber: "2",
-            date: "2024-11-24",
-            email: "sarah@gmail.com",
-            fromTime: "09:00",
-            fullName: "Sarah Ali",
-            phone: "+8801793321320",
-            toTime: "10:00"
-        },
-        {
-            age: "30",
-            amount: "200",
-            bikeNumber: "1",
-            date: "2024-11-23",
-            email: "jake@gmail.com",
-            fromTime: "12:15",
-            fullName: "Jake Doe",
-            phone: "+8801793321321",
-            toTime: "13:15"
-        },
-        {
-            age: "22",
-            amount: "120",
-            bikeNumber: "4",
-            date: "2024-11-22",
-            email: "mary@gmail.com",
-            fromTime: "14:30",
-            fullName: "Mary Smith",
-            phone: "+8801793321322",
-            toTime: "15:30"
-        },
-        {
-            age: "28",
-            amount: "180",
-            bikeNumber: "5",
-            date: "2024-11-21",
-            email: "john@gmail.com",
-            fromTime: "16:00",
-            fullName: "John Wick",
-            phone: "+8801793321323",
-            toTime: "17:00"
-        },
-        {
-            age: "24",
-            amount: "110",
-            bikeNumber: "6",
-            date: "2024-11-20",
-            email: "emily@gmail.com",
-            fromTime: "08:30",
-            fullName: "Emily Brown",
-            phone: "+8801793321324",
-            toTime: "09:30"
-        },
-        {
-            age: "21",
-            amount: "130",
-            bikeNumber: "7",
-            date: "2024-11-19",
-            email: "oliver@gmail.com",
-            fromTime: "10:45",
-            fullName: "Oliver Taylor",
-            phone: "+8801793321325",
-            toTime: "11:45"
-        }
-    ];
+  const [customers, setCustomers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-    return (
-        <div>
-            <div className="w-full  mx-auto bg-white shadow-lg rounded-sm border border-gray-200">
-                <header className="px-5 py-4 border-b border-gray-100">
-                    <h2 className="font-semibold text-gray-800">All Bookins</h2>
-                </header>
-                <div className="p-3">
-                    <div className="overflow-x-auto">
-                        <table className="table-auto w-full">
-                            <thead className="text-xs font-semibold uppercase text-gray-400 bg-gray-50">
-                                <tr>
-                                    <th className="p-2 whitespace-nowrap">
-                                        <div className="font-semibold text-left">Name</div>
-                                    </th>
-                                    <th className="p-2 whitespace-nowrap">
-                                        <div className="font-semibold text-left">Phone</div>
-                                    </th>
-                                    <th className="p-2 whitespace-nowrap">
-                                        <div className="font-semibold text-left">From Time</div>
-                                    </th>
-                                    <th className="p-2 whitespace-nowrap">
-                                        <div className="font-semibold text-left">To Time</div>
-                                    </th>
-                                    <th className="p-2 whitespace-nowrap">
-                                        <div className="font-semibold text-left">Amount</div>
-                                    </th>
-                                    <th className="p-2 whitespace-nowrap">
-                                        <div className="font-semibold text-left">Bike Number</div>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="text-sm divide-y divide-gray-100">
-                                {customers.map((customer, index) => (
-                                    <tr key={index}>
-                                        <td className="p-2 whitespace-nowrap">
-                                            <div className="font-medium text-gray-800">{customer.fullName}</div>
-                                        </td>
-                                        <td className="p-2 whitespace-nowrap">
-                                            <div className="text-left">{customer.phone}</div>
-                                        </td>
-                                        <td className="p-2 whitespace-nowrap">
-                                            <div className="text-left">{customer.fromTime}</div>
-                                        </td>
-                                        <td className="p-2 whitespace-nowrap">
-                                            <div className="text-left">{customer.toTime}</div>
-                                        </td>
-                                        <td className="p-2 whitespace-nowrap">
-                                            <div className="text-left font-medium text-green-500">
-                                                {customer.amount}
-                                            </div>
-                                        </td>
-                                        <td className="p-2 whitespace-nowrap">
-                                            <div className="text-left">{customer.bikeNumber}</div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+  // Fetch data from API on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/allhistory/api`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+        const data = await response.json();
+        setCustomers(data.bookings); // Assuming your API returns data in { bookings: [...] }
+      } catch (error) {
+        setError(error.message);
+        return []
+      } finally {
+        setLoading(false);
+        return []
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Filter customers based on search term
+  const filteredCustomers = customers.filter((customer) =>
+    customer.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    customer.phone.includes(searchTerm) ||
+    customer.email.toLowerCase().includes(searchTerm)
+  );
+
+  if (loading) {
+    return <div className='h-[100vh] flex justify-center items-center'>
+    <img
+        src="https://media.giphy.com/media/WFZvB7VIXBgiz3oDXE/giphy.gif" // Replace with your bike GIF link if needed
+        alt="E-Bike Animation"
+        className="w-64 h-64"
+    />
+    <h1 className='md:text-6xl text-3xl'>Loading............</h1>
+</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+  const formatTime = (time24) => {
+    const [hours, minutes] = time24.split(":").map(Number);
+    const period = hours >= 12 ? "PM" : "AM";
+    const hours12 = hours % 12 || 12; // Convert 0 or 12 to 12 for 12-hour format
+    return `${hours12}:${minutes.toString().padStart(2, "0")} ${period}`;
+  };
+
+  return (
+    <div>
+      <div className="w-full mx-auto bg-white shadow-lg rounded-sm border border-gray-200">
+        <header className="px-5 py-4 border-b border-gray-100">
+          <h2 className="font-semibold text-gray-800">All Bookings</h2>
+          <input
+            type="text"
+            placeholder="Search by Name, Phone, or Email"
+            className="mt-2 px-3 py-2 lg:w-[270px] w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </header>
+        <div className="p-3">
+          <div className="overflow-x-auto">
+            <table className="table-auto w-full">
+              <thead className="text-xs font-semibold uppercase text-gray-400 bg-gray-50">
+                <tr>
+                  <th className="p-2 whitespace-nowrap">
+                    <div className="font-semibold text-left">Name</div>
+                  </th>
+                  <th className="p-2 whitespace-nowrap">
+                    <div className="font-semibold text-left">Phone</div>
+                  </th>
+                  <th className="p-2 whitespace-nowrap">
+                    <div className="font-semibold text-left">From Time</div>
+                  </th>
+                  <th className="p-2 whitespace-nowrap">
+                    <div className="font-semibold text-left">To Time</div>
+                  </th>
+                  <th className="p-2 whitespace-nowrap">
+                    <div className="font-semibold text-left">Amount</div>
+                  </th>
+                  <th className="p-2 whitespace-nowrap">
+                    <div className="font-semibold text-left">Bike Number</div>
+                  </th>
+                  <th className="p-2 whitespace-nowrap">
+                    <div className="font-semibold text-left">Date</div>
+                  </th>
+                  <th className="p-2 whitespace-nowrap">
+                    <div className="font-semibold text-left">Delete</div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="text-sm divide-y divide-gray-100">
+                {filteredCustomers.length > 0 ? (
+                  filteredCustomers.map((customer, index) => (
+                    <tr key={index} className="hover:bg-slate-400">
+                      <td className="p-3 whitespace-nowrap">
+                        <div className="font-medium text-gray-800   ">{customer.fullName}</div>
+                      </td>
+                      <td className="p-3 whitespace-nowrap">
+                        <div className="text-left">{customer.phone}</div>
+                      </td>
+                      <td className="p-3 whitespace-nowrap">
+                        <div className="text-left">{formatTime(customer.fromTime)}</div>
+                      </td>
+                      <td className="p-3 whitespace-nowrap">
+                        <div className="text-left">{formatTime(customer.toTime)}</div>
+                      </td>
+                      <td className="p-3 whitespace-nowrap">
+                        <div className="text-left font-medium text-green-500">{customer.amount}</div>
+                      </td>
+                      <td className="p-3 whitespace-nowrap">
+                        <div className="text-left">{customer.bikeNumber}</div>
+                      </td>
+                      <td className="p-3 whitespace-nowrap">
+                        <div className="text-left font-bold">{customer.date}</div>
+                      </td>
+                      <td className="p-3 whitespace-nowrap">
+                      <button className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                        Delete
+                      </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="6" className="text-center p-5 text-gray-500">
+                      No bookings found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default Allhistory;

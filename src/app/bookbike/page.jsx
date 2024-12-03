@@ -1,49 +1,33 @@
-"use client";
-import React, { useState } from "react";
+"use client"
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 const BookBike = () => {
     const [selectedCustomer, setSelectedCustomer] = useState(null);
+    const [customers, setCustomers] = useState([]);
 
-    const customers = [
-        {
-            id: 1,
-            name: "Maher Ahmed",
-            phone: "+8801793321319",
-            age: 20,
-        },
-        {
-            id: 2,
-            name: "Nobin Chowdhury",
-            phone: "+8801793321320",
-            age: 24,
-        },
-        {
-            id: 3,
-            name: "Nuhash",
-            phone: "+8801793321321",
-            age: 18,
-        },
-        {
-            id: 4,
-            name: "Osama Bin Laden",
-            phone: "+8801793321322",
-            age: 30,
-        },
-        {
-            id: 5,
-            name: "Anwar Al Awlaki",
-            phone: "+8801793321323",
-            age: 24,
-        },
-    ];
+    useEffect(() => {
+        const fetchUsers = async () => {
+          try {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getallusers/api`);
+            setCustomers(response.data.users); 
+            console.log(response.data.users);
+          } catch (error) {
+            console.error("Error fetching users:", error);
+          }
+        };
+    
+        fetchUsers();
+    }, []);
 
     const handleCustomerChange = (e) => {
         const customerId = e.target.value;
-        const customer = customers.find((cust) => cust.id === parseInt(customerId));
+        const customer = customers.find((cust) => cust._id === customerId); // Match using _id
         setSelectedCustomer(customer);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         const fullName = e.target.fullName.value;
@@ -68,7 +52,28 @@ const BookBike = () => {
             amount,
         };
 
-        console.log("Form Data Submitted:", formData);
+        const resp = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/bookbike/api`, {
+            method: "POST",
+            body: JSON.stringify(formData),
+            headers: {
+                "content-type": "application/json",
+            },
+        });
+
+        if (resp.status === 200) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Booking Successful!',
+                text: 'Your bike booking has been successfully completed.',
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong. Please try again later.',
+            });
+        }
+
         e.target.reset();
         setSelectedCustomer(null); // Optionally reset the selected customer
     };
@@ -78,16 +83,14 @@ const BookBike = () => {
             <div className="flex justify-between">
                 <h2 className="text-2xl font-bold text-gray-800 mb-4">Booking Info</h2>
                 <div>
-                    {/* Customer Selector */}
-                    {/* <label className="mb-1 font-medium text-gray-700">Select Customer</label> */}
                     <select
                         onChange={handleCustomerChange}
                         className="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                     >
                         <option value="">Select Customer</option>
                         {customers.map((customer) => (
-                            <option key={customer.id} value={customer.id}>
-                                {customer.name}
+                            <option key={customer._id} value={customer._id}>
+                                {customer.fullName}
                             </option>
                         ))}
                     </select>
@@ -102,7 +105,8 @@ const BookBike = () => {
                             <input
                                 type="text"
                                 name="fullName"
-                                value={selectedCustomer ? selectedCustomer.name : ""}
+                                required
+                                value={selectedCustomer ? selectedCustomer.fullName : ""}
                                 className="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                                 placeholder="Full Name"
                             />
@@ -110,6 +114,7 @@ const BookBike = () => {
                             <input
                                 type="email"
                                 name="email"
+                                value={selectedCustomer ? selectedCustomer.email : ""}
                                 className="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                                 placeholder="Email"
                             />
@@ -117,6 +122,7 @@ const BookBike = () => {
                             <input
                                 type="text"
                                 name="phone"
+                                required
                                 value={selectedCustomer ? selectedCustomer.phone : ""}
                                 className="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                                 placeholder="Phone Number"
@@ -125,6 +131,7 @@ const BookBike = () => {
                             <input
                                 type="text"
                                 name="age"
+                                required
                                 value={selectedCustomer ? selectedCustomer.age : ""}
                                 className="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                                 placeholder="Age"
@@ -133,6 +140,7 @@ const BookBike = () => {
                             <input
                                 type="date"
                                 name="date"
+                                required
                                 className="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                             />
                         </div>
@@ -143,18 +151,21 @@ const BookBike = () => {
                             <input
                                 type="text"
                                 name="bikeNumber"
+                                required
                                 className="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                                 placeholder="Bike Number"
                             />
                             <label className="mb-1 font-medium text-gray-700">From Time</label>
                             <input
                                 type="time"
+                                required
                                 name="fromTime"
                                 className="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                             />
                             <label className="mb-1 font-medium text-gray-700">To Time</label>
                             <input
                                 type="time"
+                                required
                                 name="toTime"
                                 className="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                             />
@@ -162,6 +173,7 @@ const BookBike = () => {
                             <input
                                 type="text"
                                 name="amount"
+                                required
                                 className="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                                 placeholder="Amount"
                             />

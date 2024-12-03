@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { RiEBikeLine } from "react-icons/ri";
 import { IoIosBookmarks } from "react-icons/io";
 import { MdOutlinePendingActions } from "react-icons/md";
@@ -18,7 +19,7 @@ export default function Home() {
               <IoIosBookmarks className='lg:text-2xl md:text-xl text-white' />
             </div>
             <h1 className='lg:text-2xl  text-xl font-bold dark:text-black'>{12}</h1>
-            <p className='text-gray-500 lg:font-bold md:font-medium'>Today's Booking</p>
+            <p className='text-gray-500 lg:font-bold md:font-medium'>Today&lsquo; Booking</p>
           </div>
 
           <div className=' w-full lg:h-[200px] md:h-[150px] h-[100px] bg-[#fff4de] lg:p-8 md:p-6 p-2 lg:pl-6  md:pl-4 pl-2 rounded-xl space-y-1'>
