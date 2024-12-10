@@ -9,15 +9,15 @@ const BookBike = () => {
 
     useEffect(() => {
         const fetchUsers = async () => {
-          try {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getallusers/api`);
-            setCustomers(response.data.users); 
-            console.log(response.data.users);
-          } catch (error) {
-            console.error("Error fetching users:", error);
-          }
+            try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getallusers/api`);
+                setCustomers(response.data.users);
+                console.log(response.data.users);
+            } catch (error) {
+                console.error("Error fetching users:", error);
+            }
         };
-    
+
         fetchUsers();
     }, []);
 
@@ -66,6 +66,8 @@ const BookBike = () => {
                 title: 'Booking Successful!',
                 text: 'Your bike booking has been successfully completed.',
             });
+            e.target.reset();
+            setSelectedCustomer(null);
         } else {
             Swal.fire({
                 icon: 'error',
@@ -74,8 +76,7 @@ const BookBike = () => {
             });
         }
 
-        e.target.reset();
-        setSelectedCustomer(null); // Optionally reset the selected customer
+        // Optionally reset the selected customer
     };
 
     return (
@@ -106,7 +107,7 @@ const BookBike = () => {
                                 type="text"
                                 name="fullName"
                                 required
-                                value={selectedCustomer ? selectedCustomer.fullName : ""}
+                                value={selectedCustomer && selectedCustomer.fullName}
                                 className="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                                 placeholder="Full Name"
                             />
@@ -114,7 +115,7 @@ const BookBike = () => {
                             <input
                                 type="email"
                                 name="email"
-                                value={selectedCustomer ? selectedCustomer.email : ""}
+                                value={selectedCustomer && selectedCustomer.email}
                                 className="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                                 placeholder="Email"
                             />
@@ -123,7 +124,7 @@ const BookBike = () => {
                                 type="text"
                                 name="phone"
                                 required
-                                value={selectedCustomer ? selectedCustomer.phone : ""}
+                                value={selectedCustomer && selectedCustomer.phone}
                                 className="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                                 placeholder="Phone Number"
                             />
@@ -132,7 +133,7 @@ const BookBike = () => {
                                 type="text"
                                 name="age"
                                 required
-                                value={selectedCustomer ? selectedCustomer.age : ""}
+                                value={selectedCustomer && selectedCustomer.age}
                                 className="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                                 placeholder="Age"
                             />

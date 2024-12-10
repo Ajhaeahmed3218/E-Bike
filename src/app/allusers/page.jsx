@@ -50,7 +50,8 @@ const Allusers = () => {
     const email = e.target.email.value;
     const phone = e.target.phone.value;
     const role = e.target.role.value;
-    const newUser = { fullName, age, email, phone, role };
+    const date = new Date().toLocaleDateString("en-CA");
+    const newUser = { fullName, age, email, phone, role, date };
 
     // Using fetch to POST data
     const resp = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/allusers/api`, {
@@ -265,7 +266,14 @@ const Allusers = () => {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan="5" className="text-center py-4">Loading...</td></tr>
+              <tr><td colSpan="5" className="text-center py-4"><div className='h-[100vh] flex justify-center items-center'>
+              <img
+                  src="https://media.giphy.com/media/WFZvB7VIXBgiz3oDXE/giphy.gif" // Replace with your bike GIF link if needed
+                  alt="E-Bike Animation"
+                  className="w-64 h-64"
+              />
+              <h1 className='md:text-6xl text-3xl'>Loading............</h1>
+          </div></td></tr>
             ) : error ? (
               <tr><td colSpan="5" className="text-center py-4">{error}</td></tr>
             ) : (
